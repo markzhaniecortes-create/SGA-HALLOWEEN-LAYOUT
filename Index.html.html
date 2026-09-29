@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Halloween 2026 — Live School Layout</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f1fa;--card:#fff;--ink:#2a1540;--mute:#6a5a80;--line:#cfc3e0;--pump:#d9600a;--plum:#6b3fa0;--tint:#ece4f6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150c20;--card:#1f1330;--ink:#f1e9fb;--mute:#b3a4cc;--line:#45325f;--pump:#ff8a2a;--plum:#b592ee;--tint:#2a1a40}}
+:root[data-theme="dark"]{--bg:#150c20;--card:#1f1330;--ink:#f1e9fb;--mute:#b3a4cc;--line:#45325f;--pump:#ff8a2a;--plum:#b592ee;--tint:#2a1a40}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sarabun",system-ui,sans-serif;line-height:1.45}
+main{max-width:1180px;margin:0 auto;padding:16px}
+h1{font-size:1.6rem;margin:0}.sub{color:var(--mute);margin:2px 0 12px;font-size:.92rem}
+.grid{display:grid;grid-template-columns:1fr 310px;gap:12px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.map{overflow-x:auto;padding:6px}svg{width:100%;min-width:620px;height:auto;display:block;border-radius:8px}
+svg text{font-family:"Sarabun",sans-serif}[data-i]{cursor:pointer}[data-i]:hover{filter:brightness(1.12)}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px}
+button,select{font:inherit;padding:7px 14px;border-radius:999px;border:2px solid var(--plum);background:transparent;color:var(--ink);cursor:pointer}
+button.on,.pp{background:var(--pump);border-color:var(--pump);color:#1a0d00;font-weight:700}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+input[type=range]{flex:1;min-width:160px;accent-color:var(--pump)}
+.clock{font-size:2.3rem;font-weight:700;line-height:1}.act{font-size:1.1rem;font-weight:700;margin:6px 0 0}.th{color:var(--mute);font-size:.9rem}
+.g{display:flex;align-items:center;gap:8px;padding:5px 0;border-top:1px solid var(--line);font-size:.88rem}.g i{width:14px;height:14px;border-radius:50%;flex:none;border:2px solid #fff;outline:1px solid var(--line)}.g b{display:block}.g span{color:var(--mute)}
+h2{font-size:.95rem;margin:12px 0 4px}.strip{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.strip button{padding:4px 10px;font-size:.8rem}
+.ex{font-size:.9rem;background:var(--tint);padding:8px 10px;border-radius:8px;margin:8px 0}.info{font-size:.9rem;color:var(--mute);min-height:3.2em}.note{margin-top:12px;font-size:.85rem;color:var(--mute);border-left:4px solid var(--pump);padding:6px 12px;background:var(--card);border-radius:0 8px 8px 0}
+</style></head><body><main>
+<h1>Halloween 2026 — Live School Layout</h1>
+<p class="sub">Saint George Anusorn School · 222 Soi Abac, Bang Bo, Samut Prakan 10560 · Oct 30, 2026 · Kindergarten to Grade 9 (แผนผังสด งานฮาโลวีน 2569)</p>
+<div class="card bar"><button id="pp" class="pp">Pause</button>
+<label>Speed <select id="sp"><option value="2">Slow</option><option value="4" selected>Normal</option><option value="10">Fast</option></select></label>
+<button id="sn">🔊 Turn sound on</button><input id="sl" type="range" min="510" max="975" step="1" aria-label="Time of day"></div>
+<div class="grid"><div class="card map"><svg id="m" viewBox="0 0 800 540" role="img" aria-label="Animated campus map with student groups"></svg></div>
+<aside class="card"><div class="clock" id="clk"></div><p class="act" id="an"></p><p class="th" id="at"></p><p class="th" id="nx"></p><p class="ex" id="ad"></p>
+<h2>Where each group is</h2><div id="gl"></div>
+<h2>Tap a place on the map</h2><p class="info" id="zi">Buildings, stations and the stage show details when clicked.</p></aside></div>
+<div class="strip" id="st" role="group" aria-label="Jump to activity"></div>
+<p class="note">Building positions are an assumed campus layout (I don't have your real plan). Activities, times and rules come from your Portfolio Report; Grade 7–9 = Mathayom 1–3. Anuban eat lunch at 11:00 and nap in school (no afternoon activities). Stage, games and lunch are in the covered cafeteria (rain-proof); the Haunted Mansion is the 2nd-floor activity room. The stage is centered in the cafeteria facing the snack counter, with the OHP in the middle. Facing the school from the gate, the cafeteria is on the left and Anuban on the right.</p></main>
+<script>
+const $=i=>document.getElementById(i),NS='http://www.w3.org/2000/svg';
+const G=[{n:'Anuban K1–K3',c:'#ff6fb0'},{n:'Prathom P1–P3',c:'#ffa11f'},{n:'Prathom P4–P6',c:'#54c23f'},{n:'Mathayom M1–M3 (Gr 7–9)',c:'#7d6bff'}];
+const Z={out:[400,522],reg:[400,418],yard:[400,250],stage:[100,232],hhq:[500,124],hh:[495,80],snack:[80,225],canteen:[140,170],pickup:[675,170],nap:[675,108],
+t1:[280,340],t2:[280,200],t3:[400,130],t4:[560,235],t5:[560,335],a1:[70,295],a2:[145,295],a3:[220,295],
+p1:[60,295],p2:[94,295],p3:[128,295],p4:[162,295],p5:[196,295],p6:[230,295]};
+const ZN={out:'Off campus / going home',reg:'Registration & group photo',stage:'Stage (cafeteria)',hhq:'Waiting for haunted house',hh:'Haunted Mansion (2F)',snack:'Snack station',canteen:'Lunch in cafeteria',pickup:'Anuban pick-up',nap:'Nap time in Anuban room',yard:'Free time in courtyard',par:'Trick or Treat parade'};
+'12345'.split('').forEach(k=>ZN['t'+k]='Trick-or-treat teacher '+k);'123'.split('').forEach(k=>ZN['a'+k]='Game G'+k);'123456'.split('').forEach(k=>ZN['p'+k]='Game G'+k);
+const A=(g,t)=>'a'+((g-1+Math.floor((t-650)/10))%3+1);
+const S=[
+[510,540,'Registration & Group Photo','ลงทะเบียนและถ่ายรูป',()=>'reg'],
+[540,590,'Trick or Treat Parade','ขบวนพาเหรด Trick or Treat',()=>'par'],
+[590,620,'Game Rotation · 3 stations','ฐานกิจกรรม 3 ฐาน',(g,t)=>'a'+((g+Math.floor((t-590)/10))%3+1)],
+[620,630,'Snack Break','พักทานขนม',()=>'snack'],
+[630,650,'Haunted Mansion · Light','บ้านผีสิง (เวอร์ชันเบา)',(g,t)=>Math.floor((t-630)/5)==g?'hh':'hhq'],
+[650,660,'Anuban Winners Announced · P&M games','ประกาศผลอนุบาล / ประถมและมัธยมเล่นเกม',(g,t)=>g?A(g,t):'stage'],
+[660,690,'Anuban Lunch 11:00 · P&M games','อนุบาลทานข้าว / ประถมและมัธยมเล่นเกม',(g,t)=>g?A(g,t):'canteen'],
+[690,720,'Anuban Nap Time · P&M games','อนุบาลนอนกลางวัน / ประถมและมัธยมเล่นเกม',(g,t)=>g?A(g,t):'nap'],
+[720,780,'P&M Lunch 12:00 · Anuban nap time','ประถมและมัธยมทานข้าว 12:00',g=>g?'canteen':'nap'],
+[780,800,'Afternoon Registration','ลงทะเบียนช่วงบ่าย',()=>'reg'],
+[800,810,'Opening & Rules Briefing','ชี้แจงกติกา',()=>'stage'],
+[810,900,'Game Stations · 6 rotations','ฐานกิจกรรม 6 ฐาน',(g,t)=>'p'+(((g-1)*2+Math.floor((t-810)/15))%6+1)],
+[900,930,'Haunted Mansion · Full','บ้านผีสิง (เวอร์ชันเต็ม)',(g,t)=>Math.floor((t-900)/10)==g-1?'hh':'hhq'],
+[930,950,'Costume Contest & Awards · Prathom & Mathayom','มอบรางวัลประถมและมัธยม',()=>'stage'],
+[950,960,'Closing & Group Photo','ปิดงานและถ่ายรูปหมู่',()=>'stage']];
+const DS=["Students arrive, register by class in separate lines, get a welcome sticker and gather for the group photo at the backdrop.","All levels walk in one line around the school to happy Halloween music. Trick or treat happens while walking: teachers along the route hand out a few treats as students pass, so nobody runs or crowds around a station. Older students help lead the little ones.","Three games along the south side of the cafeteria (Pin the Hat on the Witch, Pumpkin Bowling, Musical Zombies), 10 minutes each. It works in the rain.","Snack break at the counter. Snacks are individually wrapped and allergens are labeled.","Each group takes a 5-minute turn in the bright, friendly Haunted Mansion on the 2nd floor. No jump scares, and teachers guide inside.","Anuban gather at the stage, where only the Anuban costume winners are announced (Cutest, Funniest, Most Creative, Best group/family). At the same time Prathom and Mathayom split into three groups and play the games.","Anuban eat lunch at the tables in the north part of the cafeteria from 11:00. Prathom and Mathayom keep rotating through the games, with no free time.","Anuban finish lunch and go to nap time in their room at school, with their homeroom teachers. Prathom and Mathayom keep playing the games.","Prathom and Mathayom eat lunch at 12:00 in the cafeteria while staff reset the game stations. Anuban stay in nap time.","Prathom and Mathayom register again, gather for a group photo and collect game cards for house points.","The MC explains the house-point system, game-card rules and haunted-house safety.","Six stations along the south side of the cafeteria, 15 minutes each. Every group visits all six, from Mummy Wrap to Halloween Trivia.","The full dark version on the 2nd floor. Groups of up to 8 go in by turn, with sound scares only and a teacher at the exit.","Prathom and Mathayom costume awards on stage: Scariest, Best DIY, Best Group Theme, Best Character Accuracy, Teachers Choice, Most Effort.","The house-point winner is announced, then a final group photo and pack-up."];
+const I={reg:['Registration & Group Photo','3 staff in the morning, 2 in the afternoon. Lines by class, then a group photo at the backdrop. First-aid kit on the table.'],
+ohp:['Overhead projector (OHP)','In the middle of the cafeteria, projecting toward the stage. Keep the cable and table clear of walkways.'],
+stage:['Stage in the middle of the cafeteria','Faces the snack counter so the audience sits between them and everyone can see the OHP. Costume contests and awards happen here. Morning: only Anuban winners are announced (Cutest, Funniest, Most Creative). Afternoon: Prathom/Mathayom Scariest, Best DIY, Best Group Theme, Teachers\' Choice.'],
+hh:['Haunted Mansion · 2nd-floor activity room','Morning: bright light version, teachers only. Afternoon: dark, sound scares only. Max 8 per group, walk on the stairs, a teacher at the top and at the exit.'],
+t:['Trick-or-treat teachers on the parade route','Teachers stand at set points on the route and hand out a little candy or snacks as students walk past in line. Nobody leaves the line, so there is no running or crowding. Nut-free options are labeled.'],
+a:['Morning games (in the cafeteria)','Stations line the south side (on your left when facing the snack counter), so games run even in the rain. G1 Pin the Hat on the Witch · G2 Pumpkin Bowling · G3 Musical Zombies. 10 min each, simplified rules.'],
+p:['Afternoon games (Prathom & Mathayom)','Six stations along the south side, under cover. G1 Mummy Wrap · G2 Eyeball Spoon Race · G3 Witch Hat Ring Toss · G4 Zombie Tag · G5 Mystery Box · G6 Halloween Trivia. 15 min each.'],
+snack:['Snack counter','Inside the cafeteria. The tables on the north side are for lunch. Individually wrapped snacks, allergens labeled (shellfish, peanut, dairy).'],
+aid:['First aid','Kit at registration table, roaming nurse near haunted house. Emergency numbers posted.'],
+gate:['Main gate','Soi Abac. Everyone goes home from here at 16:00.'],
+anu:['Anuban building','Homeroom teachers stay with Anuban all day. They eat lunch at 11:00, then nap in the room here at school; no Anuban in the afternoon activities.'],
+cls:['Classroom building','Prathom and Mathayom classrooms; rain plan and quiet space.'],
+cafe:['Cafeteria','Covered, so it is the rain-proof home of the stage, all game stations, snacks and lunch.']};
+const V=[['#6fae5b',0,0,800,540]],e=(n,a,x)=>{const o=document.createElementNS(NS,n);for(const k in a)o.setAttribute(k,a[k]);if(x)o.innerHTML=x;return o};
+const B=(x,y,w,h,wall,roof,i,l,th)=>`<g data-i="${i}"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${wall}" stroke="#0004"/><rect x="${x}" y="${y}" width="${w}" height="14" fill="${roof}"/><rect x="${x+4}" y="${y+20}" width="${w-8}" height="${h-30}" fill="url(#w)"/><text x="${x+w/2}" y="${y+h-3}" text-anchor="middle" font-size="11" font-weight="700" fill="#2a1540">${l}</text></g>`;
+let tr='';[[45,40],[225,32],[560,32],[600,250],[196,438],[590,440],[770,262],[250,455],[770,455],[600,300]].forEach(p=>tr+=`<circle cx="${p[0]}" cy="${p[1]}" r="12" fill="#3f8a3a"/><circle cx="${p[0]-3}" cy="${p[1]-3}" r="7" fill="#57a64b"/>`);
+let cars='';[['#c33',630],['#39c',655],['#eee',680],['#333',705]].forEach(c=>cars+=`<rect x="${c[1]}" y="${366}" width="16" height="28" rx="4" fill="${c[0]}"/>`);
+const P=(x,y,t)=>`<text x="${x}" y="${y}" font-size="16" text-anchor="middle">${t}</text>`;
+$('m').innerHTML=`<defs><pattern id="w" width="16" height="14" patternUnits="userSpaceOnUse"><rect x="3" y="3" width="9" height="7" fill="#8fc4e8" stroke="#fff5"/></pattern></defs>
+<rect width="800" height="540" fill="#6fae5b"/><rect y="478" width="800" height="62" fill="#4a4a52"/><path d="M0 510H800" stroke="#f2c94c" stroke-width="3" stroke-dasharray="18 14"/>
+<text x="700" y="498" font-size="11" fill="#fff">Soi Abac · ซอยอาบัค</text><rect x="20" y="20" width="760" height="450" fill="none" stroke="#333" stroke-width="3" stroke-dasharray="2 5"/>
+<rect x="340" y="466" width="120" height="14" fill="#c9c2b4"/><rect x="336" y="440" width="8" height="34" fill="#555"/><rect x="456" y="440" width="8" height="34" fill="#555"/>
+<rect x="270" y="160" width="260" height="190" rx="95" fill="#5c9f49" stroke="#d8b878" stroke-width="6"/><line x1="400" y1="165" x2="400" y2="345" stroke="#fff6" /><circle cx="400" cy="255" r="26" fill="none" stroke="#fff6"/>
+<path id="loop" d="M400 395H280V130H560V395H400" fill="none" stroke="#f0b35a" stroke-width="12" opacity=".55"/>
+${tr}<rect x="618" y="352" width="150" height="76" fill="#7d7d85"/>${cars}
+${B(590,50,170,90,'#fbe6ef','#e0568f','anu','Anuban (K1–K3)')}${B(250,40,300,70,'#f2e4cf','#b5533c','cls','Prathom & Mathayom')}<g transform="translate(-510,0)">${B(540,120,230,210,'#e5def2','#7a63a8','cafe','Cafeteria · โรงอาหาร (covered)')}
+<rect x="548" y="140" width="214" height="170" fill="#f6ecd9"/><rect x="600" y="208" width="112" height="0" fill="none"/>
+<polygon points="663,225 713,188 713,262" fill="#ffe680" opacity=".45"/>
+<g data-i="stage"><rect x="713" y="185" width="34" height="80" rx="4" fill="#f4b942" stroke="#8a5a00"/><text x="730" y="212" font-size="14" text-anchor="middle">🏆</text><text x="730" y="232" font-size="10" font-weight="700" text-anchor="middle" fill="#2a1540">Stage</text><text x="730" y="279" font-size="9" text-anchor="middle" fill="#2a1540">◀ faces snacks</text></g>
+<g data-i="ohp"><rect x="647" y="214" width="16" height="22" rx="3" fill="#333"/><text x="655" y="250" font-size="9" font-weight="700" text-anchor="middle" fill="#2a1540">OHP</text></g>
+<g class="zs" data-m="win"><rect x="585" y="137" width="140" height="16" rx="8" fill="#d33"/><text x="655" y="149" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">🏅 Anuban winners announced</text></g>
+<g data-i="snack"><circle cx="575" cy="172" r="9" fill="#d9b98a" stroke="#8a5a00"/><circle cx="625" cy="172" r="9" fill="#d9b98a" stroke="#8a5a00"/><circle cx="675" cy="172" r="9" fill="#d9b98a" stroke="#8a5a00"/><circle cx="725" cy="172" r="9" fill="#d9b98a" stroke="#8a5a00"/></g>
+<g data-i="snack"><rect x="548" y="185" width="14" height="80" rx="3" fill="#c98a2b"/><text x="555" y="230" font-size="11" text-anchor="middle">🍬</text></g></g>
+<g data-i="hh"><rect x="440" y="54" width="106" height="44" rx="4" fill="#4a2a7a"/><text x="493" y="72" fill="#fff" font-size="11" font-weight="700" text-anchor="middle">👻 Haunted Mansion</text><text x="493" y="88" fill="#fff" font-size="9" text-anchor="middle">2F activity room</text></g>
+<g class="zs" data-m="nap"><rect x="590" y="64" width="170" height="86" fill="#000" opacity=".35"/><text x="675" y="128" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">🌙 Nap time in school</text></g>
+<g data-i="reg"><rect x="360" y="400" width="80" height="26" rx="4" fill="#fff" stroke="#333"/><text x="400" y="417" font-size="11" font-weight="700" text-anchor="middle" fill="#2a1540">📸 Registration</text></g>
+<g data-i="aid"><rect x="448" y="400" width="46" height="26" rx="4" fill="#d33"/><text x="471" y="417" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">✚ Aid</text></g>
+<g data-i="gate"><text x="400" y="458" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Main Gate</text></g>
+${P(740,160,'🎃')}${P(360,432,'🎃')}${P(440,432,'🎃')}
+<g id="zn"></g><g id="dots"></g>`;
+[['t',[1,2,3,4,5].map(k=>Z['t'+k]),'#3d8f2e','T'],['a',[Z.a1,Z.a2,Z.a3],'#e8710a','G'],['p',[Z.p1,Z.p2,Z.p3,Z.p4,Z.p5,Z.p6],'#e8710a','G']].forEach(q=>q[1].forEach((p,k)=>{
+ const g=e('g',{'data-i':q[0],class:'zs',style:''});g.innerHTML=`<circle cx="${p[0]}" cy="${p[1]}" r="10" fill="${q[2]}" stroke="#fff" stroke-width="1.5"/><text x="${p[0]}" y="${p[1]+4}" font-size="9" font-weight="700" text-anchor="middle" fill="#fff">${q[0]=='t'?'🍬':q[3]+(k+1)}</text>`;g.dataset.m=q[0]=='p'?'pm':q[0]=='a'?'am':'par';$('zn').appendChild(g)}));
+const D=[];G.forEach((g,gi)=>{for(let i=0;i<9;i++){const c=e('circle',{r:4.5,fill:g.c,stroke:'#fff','stroke-width':1.2});$('dots').appendChild(c);D.push({c,gi,i,x:400,y:522})}});
+const L=$('loop'),LL=L.getTotalLength();let t=510,play=!matchMedia('(prefers-reduced-motion:reduce)').matches,sp=4,last=0,cur=-2;
+const zoneOf=(g,tt)=>{if(tt<510||tt>=960)return'out';if(g==0&&tt>=690)return'nap';const s=S.find(s=>tt>=s[0]&&tt<s[1]);return s?s[4](g,tt):'out'};
+const fm=m=>{m=Math.floor(m);return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')};
+function frame(ts){const dt=Math.min(.1,(ts-last)/1000);last=ts;if(play){t+=dt*sp;if(t>975)t=510}
+ $('sl').value=t;$('clk').textContent=fm(t);const si=S.findIndex(s=>t>=s[0]&&t<s[1]);
+ if(si!=cur){cur=si;const s=S[si];$('an').textContent=s?s[2]:(t<510?'Setup':'Event finished');$('at').textContent=s?s[3]:'';$('ad').textContent=DS[si]||'';if(on)chime();$('nx').textContent=S[si+1]?'Next: '+fm(S[si+1][0])+' '+S[si+1][2]:'';
+  [...$('st').children].forEach((b,k)=>b.classList.toggle('on',k==si));
+  document.querySelectorAll('.zs').forEach(z=>{const m=z.dataset.m;z.style.display=!m||(m=='am'?t<780:m=='nap'?t>=690:m=='win'?(t>=650&&t<660):m=='par'?(t>=540&&t<590):t>=780)?'':'none'})}
+ const zs=G.map((_,g)=>zoneOf(g,t));
+ D.forEach(d=>{let z=zs[d.gi],p=Z[z],a=d.i*2.4,r=3+3.6*Math.sqrt(d.i),tx,ty;
+  if(z=='par'){const q=L.getPointAtLength((((t-540)*.03+d.gi*.07+d.i*.01)%1)*LL);tx=q.x;ty=q.y}
+  else{tx=p[0]+(d.gi-1.5)*13+Math.cos(a)*r;ty=p[1]+Math.sin(a)*r*.8}
+  d.x+=(tx-d.x)*Math.min(1,dt*3);d.y+=(ty-d.y)*Math.min(1,dt*3);d.c.setAttribute('cx',d.x);d.c.setAttribute('cy',d.y)});
+ $('gl').innerHTML=G.map((g,i)=>`<div class="g"><i style="background:${g.c}"></i><div><b>${g.n}</b><span>${ZN[zs[i]]}</span></div></div>`).join('');
+ requestAnimationFrame(frame)}
+S.forEach((s,k)=>{const b=document.createElement('button');b.textContent=fm(s[0])+' '+s[2].split('·')[0].trim();b.onclick=()=>{t=s[0]};$('st').appendChild(b)});
+$('pp').onclick=()=>{play=!play;$('pp').textContent=play?'Pause':'Play'};$('sp').onchange=e=>sp=+e.target.value;$('sl').oninput=e=>t=+e.target.value;
+$('m').onclick=e=>{const n=e.target.closest('[data-i]');if(n){const k=I[n.dataset.i];if(k)$('zi').innerHTML='<b>'+k[0]+'</b><br>'+k[1]}};
+$('pp').textContent=play?'Pause':'Play';requestAnimationFrame(frame);
+let ac,mg,dl,nb,on=false,st=0,nx=0,mi=2,tm;const BPM=112,M=[72,74,76,79,81,84],CH=[[60,64,67],[59,62,67],[60,64,69],[60,65,69]],BR=[48,43,45,41],F=m=>440*Math.pow(2,(m-69)/12);
+function tone(f,t,d,ty,v,a){const o=ac.createOscillator(),g=ac.createGain();o.type=ty;o.frequency.value=f;a=a||.01;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(mg);g.connect(dl);o.start(t);o.stop(t+d+.05)}
+function nz(t,d,v,fr,ty){const s=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain();s.buffer=nb;fl.type=ty;fl.frequency.value=fr;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(mg);s.start(t);s.stop(t+d)}
+function kick(t){const o=ac.createOscillator(),g=ac.createGain();o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);g.gain.setValueAtTime(.35,t);g.gain.exponentialRampToValueAtTime(.0001,t+.2);o.connect(g);g.connect(mg);o.start(t);o.stop(t+.25)}
+function sched(){while(nx<ac.currentTime+.3){const b=Math.floor(st/8)%4,s=st%8,d=60/BPM/2;
+ if(s==0)CH[b].forEach(m=>tone(F(m-12),nx,d*8,'sine',.05,.4));
+ if(s%4==0){tone(F(BR[b]),nx,d*3,'triangle',.22);kick(nx)}
+ if(s==2||s==6)nz(nx,.12,.12,1500,'bandpass');
+ if(s%2==1)nz(nx,.05,.06,7000,'highpass');
+ if(s%2==0||Math.random()<.5){mi=Math.max(0,Math.min(5,mi+Math.floor(Math.random()*3)-1));tone(F(M[mi]),nx,d*1.6,'triangle',.1)}
+ st++;nx+=d}}
+function chime(){[84,88,91,96].forEach((m,i)=>tone(F(m),ac.currentTime+i*.09,.5,'sine',.1))}
+$('sn').onclick=()=>{if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=4200;mg=ac.createGain();mg.gain.value=.5;mg.connect(lp);lp.connect(ac.destination);dl=ac.createDelay();dl.delayTime.value=.27;const fb=ac.createGain();fb.gain.value=.3;dl.connect(fb);fb.connect(dl);const w=ac.createGain();w.gain.value=.3;dl.connect(w);w.connect(lp);nb=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);const d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+ on=!on;$('sn').textContent=on?'🔇 Turn sound off':'🔊 Turn sound on';if(on){ac.resume();nx=ac.currentTime+.1;tm=setInterval(sched,50);chime()}else clearInterval(tm)};
+</script></body></html>
